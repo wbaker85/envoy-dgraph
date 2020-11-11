@@ -11,10 +11,11 @@ const SchemaPoster = ({ token }) => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/schema`, {
+
+    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/admin`, {
       method: 'post',
       headers: {
-        'Content-Type': 'text/plain',
+        'Content-Type': 'application/x-binary',
         Authorization: `Bearer ${token}`,
       },
       body: text,

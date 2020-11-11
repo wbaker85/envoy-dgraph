@@ -29,9 +29,11 @@ services:
       - 8080:8080
       - 9080:9080
     restart: always
-    command: dgraph alpha --my=alpha:7080 --zero=zero:5080
+    command: dgraph alpha --my=alpha:7080 --zero=zero:5080 --whitelist 0.0.0.0/0
 
   ratel:
     image: dgraph/dgraph:latest
     container_name: 'dgraph-ratel'
+    ports:
+      - 8000:8000
     command: dgraph-ratel

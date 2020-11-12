@@ -10,6 +10,7 @@ function App({ token }) {
       headers: {
         'Content-Type': 'application/json',
         // Authorization: `Bearer ${token}`,
+        'X-Auth-Token': token,
       },
       body: JSON.stringify(graphQLParams),
     });

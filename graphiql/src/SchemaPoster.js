@@ -12,14 +12,18 @@ const SchemaPoster = ({ token }) => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const res = await fetch(`${process.env.REACT_APP_SERVER_URL}/admin`, {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/x-binary',
-        Authorization: `Bearer ${token}`,
-      },
-      body: text,
-    });
+    const res = await fetch(
+      `${process.env.REACT_APP_SERVER_URL}/admin/schema`,
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/x-binary',
+          // Authorization: `Bearer ${token}`,
+          'X-Auth-Token': token,
+        },
+        body: text,
+      }
+    );
 
     if (res.status === 401) {
       setErr('Invalid credentials');

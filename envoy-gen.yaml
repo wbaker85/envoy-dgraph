@@ -35,10 +35,10 @@ static_resources:
                       '@type': type.googleapis.com/envoy.extensions.filters.http.jwt_authn.v3.JwtAuthentication
                       providers:
                         auth0:
-                          issuer: ${ISSUER}
+                          issuer: https://dev-p6wel6rm.us.auth0.com/
                           remote_jwks:
                             http_uri:
-                              uri: ${JWKS_URI}
+                              uri: https://dev-p6wel6rm.us.auth0.com/.well-known/jwks.json
                               cluster: auth_tls
                               timeout:
                                 seconds: 5
@@ -82,10 +82,10 @@ static_resources:
               - endpoint:
                   address:
                     socket_address:
-                      address: ${SNI}
+                      address: dev-p6wel6rm.us.auth0.com
                       port_value: 443
       transport_socket:
         name: envoy.transport_sockets.tls
         typed_config:
           '@type': type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
-          sni: ${SNI}
+          sni: dev-p6wel6rm.us.auth0.com

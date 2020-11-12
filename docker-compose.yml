@@ -24,14 +24,19 @@ services:
       - '/var/run/docker.sock:/var/run/docker.sock:ro'
 
   envoy:
-    image: envoyproxy/envoy-dev:latest
+    build:
+      context: .
+      dockerfile: Dockerfile-envoy
     container_name: 'envoy'
     restart: always
     ports:
       - '10000:10000'
-      # - '9901:9901'
     volumes:
-      - ./envoy.yaml:/etc/envoy/envoy.yaml
+      - ./envoy-gen.yaml:/etc/envoy.yaml
+    environment:
+      - ISSUER=${ISSUER}
+      - JWKS_URI=${JWKS_URI}
+      - SNI=${SNI}
     labels:
       - 'traefik.enable=true'
       - 'traefik.port=10000'

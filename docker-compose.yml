@@ -1,13 +1,43 @@
 version: '3.2'
 services:
-  web:
-    image: nginx
+  traefik:
+    image: 'traefik:latest'
+    container_name: 'traefik'
     restart: always
-    container_name: 'dgraph-proxy'
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d/:ro
+    command:
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
+      - '--entrypoints.web.http.redirections.entrypoint.to=websecure'
+      - '--entrypoints.web.http.redirections.entrypoint.scheme=https'
+      - '--entrypoints.websecure.address=:443'
+      - '--certificatesresolvers.myresolver.acme.tlschallenge=true'
+      - '--certificatesresolvers.myresolver.acme.email=${ACME_EMAIL}'
+      - '--certificatesresolvers.myresolver.acme.storage=/letsencrypt/acme.json'
     ports:
       - '80:80'
+      - '443:443'
+      - '8090:8080'
+    volumes:
+      - 'certs:/letsencrypt'
+      - '/var/run/docker.sock:/var/run/docker.sock:ro'
+
+  envoy:
+    image: envoyproxy/envoy-dev:latest
+    container_name: 'envoy'
+    restart: always
+    ports:
+      - '10000:10000'
+      # - '9901:9901'
+    volumes:
+      - ./envoy.yaml:/etc/envoy/envoy.yaml
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.port=10000'
+      - 'traefik.http.routers.server.rule=Host(`${HOST_NAME}`)'
+      - 'traefik.http.routers.server.entrypoints=websecure'
+      - 'traefik.http.routers.server.tls.certresolver=myresolver'
 
   zero:
     image: dgraph/dgraph:latest
@@ -37,3 +67,6 @@ services:
     ports:
       - 8000:8000
     command: dgraph-ratel
+
+volumes:
+  certs:
